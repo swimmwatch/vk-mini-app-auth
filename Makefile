@@ -1,7 +1,7 @@
 SRC_DIR=.
 TESTS_DIR=tests
-PACKAGE_DIR=telegram_webapp_auth
-REFERENCES_DIR=docs/references
+PACKAGE_DIR=vk_miniapp_auth
+REFERENCES_DIR=./docs/references
 
 mypy:
 	poetry run mypy --config formatters-cfg.toml $(SRC_DIR)
@@ -18,10 +18,7 @@ black-lint:
 isort:
 	poetry run isort --settings-path formatters-cfg.toml $(SRC_DIR)
 
-doc-lint:
-	poetry run lazydocs --validate --output-path $(REFERENCES_DIR) $(PACKAGE_DIR)
-
-format: black isort doc-lint
+format: black isort
 
 lint: flake mypy black-lint
 
@@ -32,7 +29,7 @@ install:
 	poetry install --no-root
 
 mkdocs-serve:
-	poetry run mkdocs serve
+	poetry run mkdocs serve --dev-addr localhost:8008
 
 mkdocs-deploy:
 	poetry run mkdocs gh-deploy --force
