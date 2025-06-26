@@ -46,6 +46,7 @@ nav:
       - Installation: guide/install.md
       - Examples:
           - Django: guide/examples/django.md
+          - Django Ninja: guide/examples/django-ninja.md
           - FastAPI: guide/examples/fastapi.md
   - References:
       - Authorization: references/auth.md
