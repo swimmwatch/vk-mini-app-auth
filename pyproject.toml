@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "vk-mini-app-auth"
-version = "1.0.0"
+version = "1.0.1"
 description = "Python package that implements VK Mini Apps authentication algorithms."
 documentation = "https://swimmwatch.github.io/vk-mini-app-auth/"
 authors = ["Dmitry Vasiliev <contact.vasiliev.dmitry@gmail.com>"]
