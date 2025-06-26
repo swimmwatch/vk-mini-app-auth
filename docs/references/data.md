@@ -1,0 +1,1 @@
+::: vk_miniapp_auth.data
