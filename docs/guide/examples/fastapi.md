@@ -51,6 +51,7 @@ class VKMiniAppAuth(HTTPBearer):
 Use the dependency in your FastAPI app:
 ```python
 from fastapi import FastAPI, Depends
+from .auth import VKMiniAppAuth
 
 app = FastAPI()
 vk_auth = VKMiniAppAuth()
