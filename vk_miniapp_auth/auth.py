@@ -103,6 +103,14 @@ class VKMiniAppAuthenticator:
             logger.debug("Invalid VK app ID. Expected: %s, got: %s", self._app_id, launch_params.vk_app_id)
             return False
 
+        if self.is_expired(launch_params):
+            logger.debug(
+                "Launch parameters are expired. Timestamp: %s, TTL: %s",
+                launch_params.vk_ts,
+                self._ttl,
+            )
+            return False
+
         vk_params = {k: v for k, v in launch_params.get_data().items() if k.startswith("vk_")}
         sorted_vk_params = dict(sorted(vk_params.items()))
 
@@ -119,7 +127,7 @@ class VKMiniAppAuthenticator:
             .rstrip("=")
         )
 
-        return sign == launch_params.sign and not self.is_expired(launch_params)
+        return sign == launch_params.sign
 
     def is_expired(self, launch_params: VkLaunchParams) -> bool:
         """Checks if the launch parameters are expired based on the TTL.
