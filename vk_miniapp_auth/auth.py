@@ -103,7 +103,7 @@ class VKMiniAppAuthenticator:
             logger.debug("Invalid VK app ID. Expected: %s, got: %s", self._app_id, launch_params.vk_app_id)
             return False
 
-        if not self.is_expired(launch_params):
+        if self.is_expired(launch_params):
             logger.debug(
                 "Launch parameters are expired. Timestamp: %s, TTL: %s",
                 launch_params.vk_ts,
