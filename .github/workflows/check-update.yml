@@ -1,0 +1,42 @@
+name: "Check VK Mini App documentation updates"
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 * * * *'
+
+permissions:
+  issues: write
+
+jobs:
+  check-vk-docs-updates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Check VK Mini App documentation updates
+        uses: swimmwatch/webchanges-action@v1.0.1
+        with:
+          jobs: |
+            name: VK Mini App documentation
+            url: https://dev.vk.com/en/mini-apps/development/launch-params
+            use_browser: false
+            filters:
+              - html2text
+              - between:
+                  start: "## Parameters"
+                  end: "## Passing arbitrary parameters"
+          config: |
+            report:
+              tz: UTC
+              github_issue:
+                enabled: true
+                owner: "${{ github.repository_owner }}"
+                repo: "${{ github.event.repository.name }}"
+                token: "${{ secrets.GITHUB_TOKEN }}"
+                format_dt: "%Y-%m-%d"
+                title: "VK Mini App documentation update: {dt}"
+                assignees: 
+                  - "swimmwatch"
+                format_content: |
+                  ```diff
+                  {content}
+                  ```
