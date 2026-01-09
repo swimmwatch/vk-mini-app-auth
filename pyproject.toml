@@ -11,11 +11,11 @@ repository = "https://github.com/swimmwatch/vk-mini-app-auth"
 keywords = ["VK", "VK Mini Apps", "VK Bot", "Poetry"]
 classifiers = [
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Operating System :: OS Independent",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
@@ -24,7 +24,7 @@ classifiers = [
 packages = [{include = "vk_miniapp_auth"}]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.0.1"
@@ -34,7 +34,6 @@ pydocstyle = "^6.3.0"
 isort = ">=5.13.2,<7.0.0"
 flake8-isort = "^6.1.1"
 flake8-quotes = "^3.4.0"
-flake8-string-format = "^0.3.0"
 pep8-naming = ">=0.14.1,<0.16.0"
 flake8-bandit = "^4.1.1"
 flake8-comprehensions = "^3.15.0"
@@ -54,6 +53,7 @@ freezegun = "^1.5.1"
 pytest-cov = ">=6,<8"
 pytest-benchmark = "^5.1.0"
 flake8-docstrings = "^1.7.0"
+bandit = "^1.9.2"
 
 [build-system]
 requires = ["poetry-core"]
@@ -65,4 +65,4 @@ default_section = "THIRDPARTY"
 force_single_line = true
 line_length = 120
 use_parentheses = true
-py_version=39
+py_version=310
