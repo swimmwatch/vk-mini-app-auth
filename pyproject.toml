@@ -29,7 +29,7 @@ python = "^3.10"
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.0.1"
 flake8 = "7.3.0"
-black = ">=23.1,<26.0"
+black = ">=23.1,<27.0"
 pydocstyle = "^6.3.0"
 isort = ">=5.13.2,<8.0.0"
 flake8-isort = ">=6.1.1,<8.0.0"
