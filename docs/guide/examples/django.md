@@ -1,79 +1,69 @@
-## Using with Django
-Let's create authorization middleware.
+---
+title: Django
+description: Validate VK Mini Apps launch parameters in Django middleware.
+icon: material/language-python
+---
 
-Firstly, create variables in your `settings.py`:
+# Django
+
+Middleware is a practical place to validate VK launch parameters for a group of views.
+
+## Settings
+
 ```python
-# other settings...
-
-VK_SECRET_TOKEN = env.str("VK_SECRET_TOKEN")
 VK_APP_ID = env.int("VK_APP_ID")
+VK_SECRET_TOKEN = env.str("VK_SECRET_TOKEN")
 ```
 
-Then implement middleware:
+## Middleware
 
 ```python
-import logging
+from datetime import timedelta
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.http import HttpRequest
 from django.http import HttpResponse
-from vk_miniapp_auth.auth import VKMiniAppAuthenticator
+from django.http import JsonResponse
+from vk_miniapp_auth import VKMiniAppAuthenticator
 from vk_miniapp_auth.errors import InvalidInitDataError
-
-from users.services import UserService
-
-logger = logging.getLogger(__name__)
 
 
 class VKMiniAppAuthorizationMiddleware:
     def __init__(self, get_response) -> None:
         self.get_response = get_response
-        self._vk_miniapp_authenticator = VKMiniAppAuthenticator(
-            settings.VK_APP_ID,
-            settings.VK_SECRET_TOKEN,
+        self.authenticator = VKMiniAppAuthenticator(
+            app_id=settings.VK_APP_ID,
+            app_secret=settings.VK_SECRET_TOKEN,
+            ttl=timedelta(hours=1),
         )
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
-        # Code to be executed for each request before
-        # the view (and later middleware) are called.
-        auth_cred = request.headers.get("Authorization")
-        if not auth_cred:
-            # TODO: handle error
-            pass
-        
+        authorization_header = request.headers.get("Authorization")
+        if authorization_header is None:
+            return JsonResponse({"detail": "Missing authorization header"}, status=401)
+
         try:
-            launch_params = self._vk_miniapp_authenticator.get_launch_params(auth_cred)
+            launch_params = self.authenticator.get_launch_params(authorization_header)
         except InvalidInitDataError:
-            # TODO: handle error
-            pass
+            return JsonResponse({"detail": "Invalid VK launch parameters"}, status=401)
 
-        if not launch_params or not launch_params.vk_user_id:
-            # TODO: handle error
-            pass
+        if launch_params is None or not self.authenticator.is_signed(launch_params):
+            return JsonResponse({"detail": "Invalid VK launch signature"}, status=401)
 
-        is_signed = self._vk_miniapp_authenticator.is_signed(launch_params)
-        if not is_signed:
-            # TODO: handle error
-            pass
-        else:
-            user, _ = UserService.get_or_create(launch_params.vk_user_id)
-            request.user = user
-    
-            logger.debug("User was authorized using VK")
-
-        response = self.get_response(request)
-
-        # Code to be executed for each request/response after
-        # the view is called.
-
-        return response
+        request.vk_launch_params = launch_params
+        return self.get_response(request)
 ```
 
-To use `VKMiniAppAuthorizationMiddleware`, add it to your `MIDDLEWARE` setting in `settings.py`:
+## Register the middleware
+
 ```python
 MIDDLEWARE = [
-    # other middleware classes
-    'path.to.VKMiniAppAuthorizationMiddleware',
+    # ...
+    "path.to.VKMiniAppAuthorizationMiddleware",
 ]
 ```
+
+Views can then read `request.vk_launch_params.vk_user_id` and map it to an internal user.
+
+!!! note
+    For public routes that do not require VK authentication, place this middleware only around protected URL groups or add path-based bypass logic.
