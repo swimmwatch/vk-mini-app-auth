@@ -39,11 +39,11 @@ class VKMiniAppAuth(HttpBearer):
 
     def authenticate(self, request: HttpRequest, token: str) -> VkLaunchParams | None:
         try:
-            launch_params = self.authenticator.get_launch_params(token)
+            launch_params = self.authenticator.get_verified_launch_params(token)
         except InvalidInitDataError:
             return None
 
-        if launch_params is None or not self.authenticator.is_signed(launch_params):
+        if launch_params is None:
             return None
 
         return launch_params

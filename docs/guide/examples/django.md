@@ -43,11 +43,11 @@ class VKMiniAppAuthorizationMiddleware:
             return JsonResponse({"detail": "Missing authorization header"}, status=401)
 
         try:
-            launch_params = self.authenticator.get_launch_params(authorization_header)
+            launch_params = self.authenticator.get_verified_launch_params(authorization_header)
         except InvalidInitDataError:
             return JsonResponse({"detail": "Invalid VK launch parameters"}, status=401)
 
-        if launch_params is None or not self.authenticator.is_signed(launch_params):
+        if launch_params is None:
             return JsonResponse({"detail": "Invalid VK launch signature"}, status=401)
 
         request.vk_launch_params = launch_params

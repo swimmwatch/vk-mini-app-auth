@@ -9,8 +9,8 @@ icon: material/application-braces
 The authenticator is framework-agnostic. Each example follows the same pattern:
 
 1. Read the authorization value from the incoming request.
-2. Parse launch parameters with `get_launch_params()`.
-3. Validate the signature and TTL with `is_signed()`.
+2. Parse and verify launch parameters with `get_verified_launch_params()`.
+3. Treat `InvalidInitDataError` and `None` results as authentication failures.
 4. Use the verified `vk_user_id` in application-specific user lookup logic.
 
 <div class="grid cards" markdown>

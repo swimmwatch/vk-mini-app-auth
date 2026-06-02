@@ -32,20 +32,18 @@ from vk_miniapp_auth.errors import InvalidInitDataError
 
 def get_verified_vk_user_id(authorization_header: str) -> int:
     try:
-        launch_params = authenticator.get_launch_params(authorization_header)
+        launch_params = authenticator.get_verified_launch_params(authorization_header)
     except InvalidInitDataError as exc:
         raise PermissionError("Invalid VK launch parameters") from exc
 
     if launch_params is None:
-        raise PermissionError("Missing VK launch parameters")
-
-    if not authenticator.is_signed(launch_params):
         raise PermissionError("Invalid VK launch signature")
 
     return launch_params.vk_user_id
 ```
 
-Use the returned `vk_user_id` only after `is_signed()` returns `True`.
+Use the returned `vk_user_id` only after `get_verified_launch_params()` returns a `VkLaunchParams` object.
+The helper returns `None` when the parsed launch parameters fail the app ID, TTL, or signature checks.
 
 ## Send launch data from the client
 
@@ -77,3 +75,15 @@ Treat all validation failures as authentication failures:
 - mismatched `sign`.
 
 Avoid returning detailed signature errors to end users. Detailed logs are useful internally, but public responses should stay generic.
+
+## Parse without trusting
+
+Use `get_launch_params()` only when you intentionally need a parse-only step:
+
+```python
+launch_params = authenticator.get_launch_params(authorization_header)
+if launch_params is None or not authenticator.is_signed(launch_params):
+    raise PermissionError("Invalid VK launch signature")
+```
+
+`get_launch_params()` converts fields into Python types and raises `InvalidInitDataError` for malformed data, but it does not verify the signature by itself.

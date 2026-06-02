@@ -52,11 +52,11 @@ authenticator = VKMiniAppAuthenticator(
 
 def authenticate_vk_request(authorization_header: str) -> int:
     try:
-        launch_params = authenticator.get_launch_params(authorization_header)
+        launch_params = authenticator.get_verified_launch_params(authorization_header)
     except InvalidInitDataError as exc:
         raise PermissionError("Invalid VK launch parameters") from exc
 
-    if launch_params is None or not authenticator.is_signed(launch_params):
+    if launch_params is None:
         raise PermissionError("VK launch signature check failed")
 
     return launch_params.vk_user_id
@@ -70,7 +70,7 @@ def authenticate_vk_request(authorization_header: str) -> int:
 1. The mini app opens with VK launch parameters in the URL.
 2. The client sends the launch URL to your backend as the authorization value expected by your application.
 3. The backend decodes and parses the launch parameters.
-4. `VKMiniAppAuthenticator` checks the app ID, TTL, and VK signature.
+4. `VKMiniAppAuthenticator.get_verified_launch_params()` checks the app ID, TTL, and VK signature.
 5. Your application maps the verified `vk_user_id` to an internal user.
 
 ## Next steps

@@ -9,6 +9,26 @@ icon: material/key-chain
 VK Mini Apps launch data contains user, app, platform, and source information.
 The package parses that data into `VkLaunchParams` and verifies that the signed values were not modified.
 
+## Parse and verify
+
+Use `get_verified_launch_params()` for the normal authentication path:
+
+```python
+launch_params = authenticator.get_verified_launch_params(authorization_header)
+if launch_params is None:
+    raise PermissionError("Invalid VK launch signature")
+```
+
+It performs the full backend check:
+
+1. Decode the base64 authorization value.
+2. Parse the launch query string.
+3. Convert required fields into typed Python values.
+4. Verify `vk_app_id`, `vk_ts`, and `sign`.
+
+Use `get_launch_params()` only when you need a parse-only operation and will call `is_signed()` yourself.
+Parsed data is not trusted until the signature check succeeds.
+
 ## What is signed
 
 `VKMiniAppAuthenticator.is_signed()` follows VK's launch parameter signing rules:
@@ -19,7 +39,7 @@ The package parses that data into `VkLaunchParams` and verifies that the signed 
 4. URL-encode the sorted `parameter=value` pairs.
 5. Build an HMAC-SHA256 digest with the VK app secure key.
 6. Base64url-encode the digest and remove padding.
-7. Compare the result with the received `sign` value.
+7. Compare the result with the received `sign` value using a constant-time comparison.
 
 The `sign` field itself is not included in the signed string.
 
@@ -45,6 +65,7 @@ datetime.now(timezone.utc) - launch_params.vk_ts > ttl
 ```
 
 The default TTL is one hour.
+Passing `ttl=timedelta(0)` is allowed and keeps the launch payload valid only at its exact timestamp.
 
 ```python
 from datetime import timedelta
@@ -60,6 +81,17 @@ authenticator = VKMiniAppAuthenticator(
 
 Signature validation uses the original parsed data returned by `VkLaunchParams.get_data()`.
 That means additional `vk_*` parameters can still be included in the signature calculation, even when the typed dataclass does not expose a dedicated field yet.
+
+## Invalid input
+
+Malformed input raises `InvalidInitDataError` during parsing. This includes:
+
+- missing authorization header values;
+- invalid base64 or non-UTF-8 payloads;
+- missing required launch parameters;
+- invalid integer, boolean, timestamp, language, platform, or group role values.
+
+Treat these cases as authentication failures and avoid exposing detailed parsing errors to users.
 
 !!! tip
     Keep an eye on VK documentation updates when new launch parameters or enum values appear. Add focused tests before changing signature behavior.

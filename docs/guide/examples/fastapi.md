@@ -45,14 +45,14 @@ async def verified_vk_launch_params(
         )
 
     try:
-        launch_params = authenticator.get_launch_params(credentials.credentials)
+        launch_params = authenticator.get_verified_launch_params(credentials.credentials)
     except InvalidInitDataError as exc:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid VK launch parameters",
         ) from exc
 
-    if launch_params is None or not authenticator.is_signed(launch_params):
+    if launch_params is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid VK launch signature",
