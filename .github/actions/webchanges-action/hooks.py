@@ -241,10 +241,15 @@ class BetweenLinesFilter(FilterBase):
         start_pattern = subfilter.get("start")
         end_pattern = subfilter.get("end")
 
+        is_bytes = isinstance(data, bytes)
+        if is_bytes:
+            data = data.decode("utf-8")
+
         lines = data.splitlines(keepends=True)
         filtered_lines = get_lines_between(lines, start_pattern, end_pattern)
+        filtered_data = "".join(filtered_lines)
 
         return (
-            "\n".join(filtered_lines),
+            filtered_data.encode("utf-8") if is_bytes else filtered_data,
             mime_type,
         )
