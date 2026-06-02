@@ -1,65 +1,111 @@
-site_name: VK Mini App Authentication
+site_name: vk-mini-app-auth
 site_url: https://swimmwatch.github.io/vk-mini-app-auth/
 site_author: Dmitry Vasiliev
 site_description: >-
-  Python package that implements VK Mini App authentication algorithm.
+  Dependency-free Python authentication helpers for validating signed VK Mini Apps launch parameters.
 
 repo_url: https://github.com/swimmwatch/vk-mini-app-auth
 repo_name: swimmwatch/vk-mini-app-auth
+edit_uri: edit/dev/docs/
 
-copyright: Copyright &copy; 2025 Dmitry Vasiliev
+copyright: Copyright &copy; 2025-2026 Dmitry Vasiliev
 
 theme:
   name: material
   language: en
+  icon:
+    repo: fontawesome/brands/github
   features:
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.progress
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.sections
     - navigation.indexes
+    - navigation.top
     - navigation.footer
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.action.edit
+    - content.action.view
+    - content.code.annotate
     - content.code.copy
+    - content.code.select
   palette:
     - media: "(prefers-color-scheme: light)"
-      scheme: slate
-      primary: deep blue
-      accent: blue
-      toggle:
-        icon: material/lightbulb-outline
-        name: Switch to dark mode
-    - media: "(prefers-color-scheme: dark)"
       scheme: default
       primary: blue
-      accent: deep blue
+      accent: light blue
       toggle:
-        icon: material/lightbulb
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: blue
+      accent: light blue
+      toggle:
+        icon: material/weather-sunny
         name: Switch to light mode
 
 extra:
+  generator: false
+  homepage: https://swimmwatch.github.io/vk-mini-app-auth/
   social:
     - icon: fontawesome/brands/github
+      name: Source code on GitHub
       link: https://github.com/swimmwatch/vk-mini-app-auth/
     - icon: fontawesome/brands/python
+      name: Package on PyPI
       link: https://pypi.org/project/vk-mini-app-auth/
+    - icon: fontawesome/solid/envelope
+      name: Contact maintainer
+      link: mailto:contact.vasiliev.dmitry@gmail.com
 
 nav:
   - Home: index.md
   - Guide:
+      - guide/index.md
       - Installation: guide/install.md
+      - Quickstart: guide/quickstart.md
+      - Launch Parameters: guide/launch-parameters.md
       - Examples:
+          - guide/examples/index.md
+          - FastAPI: guide/examples/fastapi.md
           - Django: guide/examples/django.md
           - Django Ninja: guide/examples/django-ninja.md
-          - FastAPI: guide/examples/fastapi.md
-  - References:
-      - Authorization: references/auth.md
-      - Data: references/data.md
+  - API Reference:
+      - Authenticator: references/auth.md
+      - Launch Data: references/data.md
       - Errors: references/errors.md
+  - Coverage: coverage.md
   - License: license.md
 
 plugins:
-  - search
+  - search:
+      lang: en
+  - meta
+  - social:
+      cards_layout: default/variant
   - section-index
   - coverage
   - mkdocstrings:
       default_handler: python
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            docstring_section_style: list
+            members_order: source
+            separate_signature: true
+            line_length: 88
+            show_root_heading: true
+            show_root_full_path: false
+            show_signature_annotations: true
+            show_source: true
+            show_if_no_docstring: true
   - macros:
       include_dir: .
   - minify:
@@ -71,10 +117,25 @@ plugins:
       cache_safe: true
 
 markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span
       pygments_lang_class: true
   - pymdownx.inlinehilite
+  - pymdownx.keys
   - pymdownx.snippets
   - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true

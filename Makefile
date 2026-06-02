@@ -2,40 +2,43 @@ SRC_DIR=.
 TESTS_DIR=tests
 PACKAGE_DIR=vk_miniapp_auth
 REFERENCES_DIR=./docs/references
+PYENV_VERSION ?= 3.13.12
+POETRY := PYENV_VERSION=$(PYENV_VERSION) poetry
+MKDOCS_ADDR ?= localhost:8010
 
 mypy:
-	poetry run mypy --config formatters-cfg.toml $(SRC_DIR)
+	$(POETRY) run mypy --config formatters-cfg.toml $(SRC_DIR)
 
 flake:
-	poetry run flake8 --toml-config formatters-cfg.toml $(SRC_DIR)
+	$(POETRY) run flake8 --toml-config formatters-cfg.toml $(SRC_DIR)
 
 black:
-	poetry run black --config formatters-cfg.toml $(SRC_DIR)
+	$(POETRY) run black --config formatters-cfg.toml $(SRC_DIR)
 
 black-lint:
-	poetry run black --check --config formatters-cfg.toml $(SRC_DIR)
+	$(POETRY) run black --check --config formatters-cfg.toml $(SRC_DIR)
 
 isort:
-	poetry run isort --settings-path formatters-cfg.toml $(SRC_DIR)
+	$(POETRY) run isort --settings-path formatters-cfg.toml $(SRC_DIR)
 
 format: black isort
 
 lint: flake mypy black-lint
 
 lock:
-	poetry lock
+	$(POETRY) lock
 
 install:
-	poetry install --no-root
+	$(POETRY) install --no-root
 
 mkdocs-serve:
-	poetry run mkdocs serve --dev-addr localhost:8008
+	$(POETRY) run mkdocs serve --dev-addr $(MKDOCS_ADDR)
 
 mkdocs-deploy:
-	poetry run mkdocs gh-deploy --force
+	$(POETRY) run mkdocs gh-deploy --force
 
 test:
-	poetry run pytest --benchmark-autosave --cov=$(PACKAGE_DIR) --cov-branch --cov-report=xml --numprocesses logical $(TESTS_DIR)
+	$(POETRY) run pytest --benchmark-autosave --cov=$(PACKAGE_DIR) --cov-branch --cov-report=xml --numprocesses logical $(TESTS_DIR)
 
 actionlint:
 	docker run --rm -v $(shell pwd):/repo --workdir /repo rhysd/actionlint:latest -color

@@ -1,42 +1,87 @@
 # Contributing
-We love your input! We want to make contributing to this project as easy and transparent as possible, whether it's:
 
-- Reporting a bug
-- Discussing the current state of the code
-- Submitting a fix
-- Proposing new features
-- Becoming a maintainer
+Thank you for taking the time to improve `vk-mini-app-auth`.
 
-## We Develop with Github
-We use github to host code, to track issues and feature requests, as well as accept pull requests.
+This project is maintained as a small, dependency-free Python package for VK Mini Apps launch parameter authentication.
+Please keep contributions focused and consistent with that scope.
 
-## We Use [Github Flow](https://guides.github.com/introduction/flow/index.html), So All Code Changes Happen Through Pull Requests
-Pull requests are the best way to propose changes to the codebase (we use [Github Flow](https://guides.github.com/introduction/flow/index.html)). We actively welcome your pull requests:
+## Project Status
 
-1. Fork the repo and create your branch from `dev`.
-2. If you've added code that should be tested, add tests.
-3. If you've changed APIs, update the documentation.
-4. Ensure the test suite passes.
-5. Make sure your code lints.
-6. Issue that pull request!
+The project is in maintenance mode. The expected contribution types are:
 
-## Report bugs using Github's [issues](https://github.com/swimmwatch/vk-mini-app-auth/issues)
-We use GitHub issues to track public bugs. Report a bug by [opening a new issue](); it's that easy!
+- bug fixes;
+- security fixes;
+- dependency maintenance;
+- documentation fixes;
+- CI and packaging fixes;
+- small compatibility improvements for VK Mini Apps authentication behavior.
 
-## Write bug reports with detail, background, and sample code
-[This is an example](http://stackoverflow.com/q/12488905/180626) of a bug report, and I think it's not a bad model.
+New framework integrations or broad feature additions should be discussed in an issue before implementation.
 
-**Great Bug Reports** tend to have:
+## Development Workflow
 
-- A quick summary and/or background
-- Steps to reproduce
-  - Be specific!
-  - Give sample code if you can.
-- What you expected would happen
-- What actually happens
-- Notes (possibly including why you think this might be happening, or stuff you tried that didn't work)
+We use GitHub issues for public bug reports and GitHub pull requests for code changes.
 
-People *love* thorough bug reports. I'm not even kidding.
+1. Fork the repository.
+2. Create a branch from `dev`.
+3. Keep the change focused on one issue or maintenance task.
+4. Add or update tests when behavior changes.
+5. Update `README.md` and `docs/` when public behavior or usage changes.
+6. Open a pull request against `dev`.
+
+Commit messages should follow Conventional Commits, for example:
+
+```text
+fix: handle invalid launch timestamp
+docs: update installation guide
+ci: adjust docs monitoring workflow
+```
+
+## Local Setup
+
+Install development dependencies:
+
+```bash
+make install
+```
+
+Useful checks:
+
+```bash
+make lint
+make test
+make actionlint
+poetry run mkdocs build --strict --site-dir /tmp/vk-mini-app-auth-site
+```
+
+For documentation-only changes, run the strict MkDocs build when the changed content affects rendered docs.
+
+## Reporting Bugs
+
+Use [GitHub issues](https://github.com/swimmwatch/vk-mini-app-auth/issues/new/choose) for public bugs.
+
+Good bug reports include:
+
+- a concise summary;
+- package version and Python version;
+- operating system;
+- minimal input or code that reproduces the problem;
+- expected behavior;
+- actual behavior;
+- any traceback or logs.
+
+Do not report security vulnerabilities publicly. Use the process in [SECURITY.md](SECURITY.md).
+
+## Pull Request Checklist
+
+Before opening or updating a pull request:
+
+- keep runtime dependencies unchanged unless explicitly justified;
+- preserve public API compatibility unless a breaking change was discussed and accepted;
+- keep auth and signature logic covered by focused tests;
+- ensure generated artifacts are not committed;
+- run the relevant local checks and mention them in the pull request.
 
 ## References
-This document was adapted from the open-source contribution guidelines for [Facebook's Draft](https://github.com/facebook/draft-js/blob/a9316a723f9e918afde44dea68b5f9f39b7d9b00/CONTRIBUTING.md)
+
+This guide is intentionally project-specific. For repository-specific operating notes, see [AGENTS.md](AGENTS.md).
