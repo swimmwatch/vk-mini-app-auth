@@ -88,10 +88,10 @@ poetry run isort --check-only --settings-path formatters-cfg.toml .
 - Verify documentation changes with:
 
 ```bash
-poetry run mkdocs build --strict --site-dir /tmp/vk-mini-app-auth-site
+PYENV_VERSION=3.13.12 poetry run mkdocs build --strict --site-dir /tmp/vk-mini-app-auth-site
 ```
 
-- Use `make mkdocs-serve` for local preview on `localhost:8008`.
+- Use `make mkdocs-serve` for local preview on the Makefile `MKDOCS_ADDR` value, defaulting to `localhost:8010`.
 - Do not commit the generated `site/` directory.
 
 ## Tests And CI
