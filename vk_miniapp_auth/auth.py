@@ -1,6 +1,7 @@
 """VK Mini App Authenticator utilities."""
 
 import base64
+import binascii
 import hashlib
 import hmac
 import logging
@@ -37,16 +38,20 @@ class VKMiniAppAuthenticator:
         """
         self._app_id = app_id
         self._app_secret = app_secret
-        self._ttl = ttl or timedelta(hours=1)
+        self._ttl = timedelta(hours=1) if ttl is None else ttl
 
     def get_launch_params(self, authorization_header: str) -> typing.Optional[VkLaunchParams]:
-        """Extracts and validates launch parameters from the authorization header.
+        """Extract launch parameters from the authorization header.
+
+        This method parses and type-converts launch parameters, but does not verify the
+        VK signature. Call is_signed() or get_verified_launch_params() before trusting
+        the returned data.
 
         Args:
             authorization_header (str): The authorization header containing the launch parameters.
 
         Returns:
-            VkLaunchParams: An instance of VkLaunchParams if valid, otherwise None.
+            VkLaunchParams: An instance of VkLaunchParams if present, otherwise None.
         """
         query_params_url = self.extract_query_params_as_url(authorization_header)
         query_params = self.extract_query_params_as_dict(query_params_url)
@@ -54,6 +59,24 @@ class VKMiniAppAuthenticator:
             return None
 
         return VkLaunchParams(**query_params)
+
+    def get_verified_launch_params(self, authorization_header: str) -> typing.Optional[VkLaunchParams]:
+        """Extract launch parameters and verify their VK signature.
+
+        Args:
+            authorization_header (str): The authorization header containing the launch parameters.
+
+        Returns:
+            VkLaunchParams: An instance of VkLaunchParams if present and valid, otherwise None.
+        """
+        launch_params = self.get_launch_params(authorization_header)
+        if launch_params is None:
+            return None
+
+        if not self.is_signed(launch_params):
+            return None
+
+        return launch_params
 
     @staticmethod
     def extract_query_params_as_url(authorization_header: str) -> str:
@@ -66,13 +89,14 @@ class VKMiniAppAuthenticator:
             str: The decoded query parameters as a URL.
         """
         if not authorization_header:
-            raise ValueError("Missing authorization header value")
+            raise InvalidInitDataError("Missing authorization header value")
 
         authorization_header = authorization_header.strip()
 
         try:
-            return base64.b64decode(authorization_header).decode("utf-8")
-        except ValueError as err:
+            padding = "=" * (-len(authorization_header) % 4)
+            return base64.b64decode(authorization_header + padding, validate=True).decode("utf-8")
+        except (binascii.Error, UnicodeDecodeError, ValueError) as err:
             logger.error("Failed to decode authorization header: %s", err)
             raise InvalidInitDataError("Invalid authorization header format") from err
 
@@ -127,7 +151,7 @@ class VKMiniAppAuthenticator:
             .rstrip("=")
         )
 
-        return sign == launch_params.sign
+        return hmac.compare_digest(sign, launch_params.sign)
 
     def is_expired(self, launch_params: VkLaunchParams) -> bool:
         """Checks if the launch parameters are expired based on the TTL.
