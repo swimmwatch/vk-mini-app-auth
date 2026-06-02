@@ -105,7 +105,8 @@ poetry run mkdocs build --strict --site-dir /tmp/vk-mini-app-auth-site
 ## Commit And PR Hygiene
 
 - Do not touch unrelated untracked files unless explicitly asked.
-- Do not commit generated artifacts such as `.coverage`, `.benchmarks/`, `.mypy_cache/`, `.pytest_cache/`, `site/`, `dist/`, virtualenvs, or IDE files.
+- Do not commit generated artifacts such as `.coverage`, `.benchmarks/`, `.mypy_cache/`, `.pytest_cache/`, `site/`, `dist/`, or virtualenvs.
+- Do not add or update IDE files unless the user explicitly asks for that change.
 - Keep commits scoped to one logical change.
 - Commit messages should follow Conventional Commits, for example `fix: handle invalid launch timestamp`.
 - Do not bump the package version unless explicitly requested.

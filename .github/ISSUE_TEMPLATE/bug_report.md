@@ -1,48 +1,45 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Report a reproducible problem
 title: ''
 labels: bug
 assignees: swimmwatch
-
 ---
 
----
-name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: bug
-assignees: swimmwatch
+<!-- Do not report security vulnerabilities publicly. See SECURITY.md instead. -->
 
----
+## Summary
 
-<!--- Provide a general summary of the issue in the Title above -->
+<!-- Provide a concise description of the problem. -->
 
-## Expected Behavior
-<!--- Tell us what should happen -->
+## Environment
 
-## Current Behavior
-<!--- Tell us what happens instead of the expected behavior -->
+- `vk-mini-app-auth` version:
+- Python version:
+- Operating system:
 
-## Possible Solution
-<!--- Not obligatory, but suggest a fix/reason for the bug, -->
+## Steps To Reproduce
 
-## Steps to Reproduce
-<!--- Provide a link to a live example, or an unambiguous set of steps to -->
-<!--- reproduce this bug. Include code to reproduce, if relevant -->
 1.
 2.
 3.
-4.
 
-## Context (Environment)
-<!--- How has this issue affected you? What are you trying to accomplish? -->
-<!--- Providing context helps us come up with a solution that is most useful in the real world -->
+## Expected Behavior
 
-<!--- Provide a general summary of the issue in the Title above -->
+<!-- Tell us what should happen. -->
 
-## Detailed Description
-<!--- Provide a detailed description of the change or addition you are proposing -->
+## Actual Behavior
 
-## Possible Implementation
-<!--- Not obligatory, but suggest an idea for implementing addition or change -->
+<!-- Tell us what happens instead. Include traceback or logs when available. -->
+
+## Minimal Example
+
+<!-- Add the smallest code or input sample that reproduces the issue. -->
+
+```python
+
+```
+
+## Additional Context
+
+<!-- Add any other context that may help diagnose the issue. -->

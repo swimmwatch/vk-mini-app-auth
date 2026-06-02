@@ -1,23 +1,39 @@
-THIS PROJECT IS IN MAINTENANCE MODE. We accept pull-requests for Bug Fixes **ONLY**. NO NEW FEATURES ACCEPTED!
+<!--
+Keep pull requests focused. This project is in maintenance mode, so bug fixes,
+security fixes, dependency updates, documentation fixes, CI fixes, and small
+compatibility improvements are expected. Discuss broad feature work in an issue first.
+-->
 
-<!--- Provide a general summary of your changes in the Title above -->
+## Summary
 
-## Description
-<!--- Describe your changes in detail -->
+<!-- Briefly describe what changed and why. -->
 
 ## Related Issue
-<!--- This project only accepts pull requests related to open issues -->
-<!--- If suggesting a new feature or change, please discuss it in an issue first -->
-<!--- If fixing a bug, there should be an issue describing it with steps to reproduce -->
-<!--- Please link to the issue here: -->
 
-## Motivation and Context
-<!--- Why is this change required? What problem does it solve? -->
-<!--- If it fixes an open issue, please link to the issue here. -->
+<!-- Link the issue if one exists. Use "Closes #123" when appropriate. -->
 
-## How Has This Been Tested (if appropriate)?
-<!--- Please describe in detail how you tested your changes. -->
-<!--- Include details of your testing environment, and the tests you ran to -->
-<!--- see how your change affects other areas of the code, etc. -->
+## Change Type
 
-## Screenshots (if appropriate):
+- [ ] Bug fix
+- [ ] Security fix
+- [ ] Dependency maintenance
+- [ ] Documentation update
+- [ ] CI or packaging update
+- [ ] Compatibility improvement
+
+## Verification
+
+<!-- List the checks you ran, or explain why they are not applicable. -->
+
+- [ ] `make lint`
+- [ ] `make test`
+- [ ] `poetry run mkdocs build --strict --site-dir /tmp/vk-mini-app-auth-site`
+- [ ] `make actionlint`
+
+## Checklist
+
+- [ ] I kept the change focused and scoped to this pull request.
+- [ ] I preserved public API compatibility or documented an accepted breaking change.
+- [ ] I updated tests for behavior changes.
+- [ ] I updated documentation for public behavior or usage changes.
+- [ ] I did not commit generated artifacts, secrets, or unrelated files.

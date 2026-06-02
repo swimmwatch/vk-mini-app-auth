@@ -2,28 +2,36 @@
 
 ## Supported Versions
 
-We release security updates for the latest stable version of this project. Older versions may not receive security updates.
+Security updates are provided for the latest stable release of `vk-mini-app-auth`.
+Older versions may not receive patches.
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability, please report it by emailing the maintainers or opening a private issue on GitHub. Do **not** disclose security issues publicly until they have been reviewed and patched.
-- Telegram: [https://t.me/contact_vasiliev_dmitry]
-- Email: [contact.vasiliev.dmitry@gmail.com]
-- GitHub: [https://github.com/swimmwatch/vk-mini-app-auth/issues]
+Please do not disclose security vulnerabilities publicly until they have been reviewed and patched.
 
-We will respond as quickly as possible and keep you informed of the progress.
+Report vulnerabilities through one of these private channels:
+
+- Email: <contact.vasiliev.dmitry@gmail.com>
+- Telegram: <https://t.me/contact_vasiliev_dmitry>
+- GitHub private vulnerability report: <https://github.com/swimmwatch/vk-mini-app-auth/security/advisories/new>
+
+Include as much detail as possible:
+
+- affected package version;
+- Python version;
+- a minimal reproduction or proof of concept;
+- expected impact;
+- any relevant logs or traceback.
+
+We will review the report, confirm the impact, and coordinate a fix before public disclosure.
 
 ## Security Practices
 
-- All code changes are reviewed before merging.
-- Dependencies are regularly updated to address known vulnerabilities.
-- Sensitive data (such as secrets and credentials) must not be committed to the repository.
-- Use strong, unique credentials for all integrations.
-
-## Disclosure Policy
-
-We follow a responsible disclosure process. Once a vulnerability is confirmed, we will work to release a fix and publicly disclose the issue after a patch is available.
+- All code changes should be reviewed before merging.
+- Dependencies are updated regularly to address known vulnerabilities.
+- Secrets, credentials, and private tokens must not be committed.
+- Tests for authentication behavior should be deterministic and should not call VK over the network.
 
 ## Questions
 
-For any security-related questions, contact the maintainers at the email above.
+For security-related questions, contact the maintainers at the email address above.
