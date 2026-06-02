@@ -1,29 +1,28 @@
 ---
-name: Feature request
-about: Suggest an idea for this project
+name: Maintenance proposal
+about: Suggest a scoped compatibility, documentation, CI, or packaging improvement
 title: ''
 labels: enhancement
 assignees: swimmwatch
-
 ---
 
----
-name: Feature request
-about: Suggest an idea for this project
-title: ''
-labels: enhancement
-assignees: swimmwatch
+<!--
+This project is in maintenance mode. Broad new features and new runtime framework
+integrations are unlikely to be accepted without prior discussion.
+-->
 
----
+## Problem
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+<!-- What problem or compatibility gap should be addressed? -->
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+## Proposed Change
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+<!-- Describe the smallest useful change. -->
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+## Alternatives Considered
+
+<!-- Mention other approaches if relevant. -->
+
+## Impact
+
+<!-- Describe API, dependency, documentation, testing, or CI impact. -->

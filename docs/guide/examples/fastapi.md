@@ -1,64 +1,72 @@
-Here is a Markdown example for using VK Mini App authorization with FastAPI, analogous to the Django and Django Ninja examples.
+---
+title: FastAPI
+description: Validate VK Mini Apps launch parameters with a FastAPI dependency.
+icon: simple/fastapi
+---
 
-## Using with FastAPI
+# FastAPI
 
-Implement a dependency for authorization:
+Use a dependency to parse and validate the authorization header before the endpoint runs.
+
 ```python
-import logging
 import os
-from fastapi import Depends, FastAPI, HTTPException, Request, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from vk_miniapp_auth.auth import VKMiniAppAuthenticator
+from datetime import timedelta
+
+from fastapi import Depends
+from fastapi import FastAPI
+from fastapi import HTTPException
+from fastapi import Request
+from fastapi import status
+from fastapi.security import HTTPAuthorizationCredentials
+from fastapi.security import HTTPBearer
+from vk_miniapp_auth import VKMiniAppAuthenticator
+from vk_miniapp_auth.data import VkLaunchParams
 from vk_miniapp_auth.errors import InvalidInitDataError
-from users.services import UserService
 
-logger = logging.getLogger(__name__)
-
-class VKMiniAppAuth(HTTPBearer):
-    def __init__(self):
-        super().__init__()
-        self._vk_miniapp_authenticator = VKMiniAppAuthenticator(
-            int(os.environ["VK_APP_ID"]),
-            os.environ["VK_SECRET_TOKEN"],
-        )
-
-    async def __call__(self, request: Request):
-        credentials: HTTPAuthorizationCredentials = await super().__call__(request)
-        token = credentials.credentials if credentials else None
-        
-        if not token:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing token")
-        
-        try:
-            launch_params = self._vk_miniapp_authenticator.get_launch_params(token)
-        except InvalidInitDataError:
-            logger.warning("Invalid VK init data")
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid VK init data")
-        
-        if not launch_params or not launch_params.vk_user_id:
-            logger.warning("Missing VK user ID")
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing VK user ID")
-        
-        if not self._vk_miniapp_authenticator.is_signed(launch_params):
-            logger.warning("VK signature check failed")
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="VK signature check failed")
-        
-        user, _ = UserService.get_or_create(launch_params.vk_user_id)
-        logger.debug("User was authorized using VK")
-        return user
-```
-
-Use the dependency in your FastAPI app:
-```python
-from fastapi import FastAPI, Depends
-from .auth import VKMiniAppAuth
 
 app = FastAPI()
-vk_auth = VKMiniAppAuth()
+security = HTTPBearer(auto_error=False)
 
-@app.get("/protected")
-async def protected_endpoint(user=Depends(vk_auth)):
-    return {"user_id": user.id}
+authenticator = VKMiniAppAuthenticator(
+    app_id=int(os.environ["VK_APP_ID"]),
+    app_secret=os.environ["VK_SECRET_TOKEN"],
+    ttl=timedelta(hours=1),
+)
+
+
+async def verified_vk_launch_params(
+    request: Request,
+    credentials: HTTPAuthorizationCredentials | None = Depends(security),
+) -> VkLaunchParams:
+    if credentials is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Missing authorization header",
+        )
+
+    try:
+        launch_params = authenticator.get_verified_launch_params(credentials.credentials)
+    except InvalidInitDataError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid VK launch parameters",
+        ) from exc
+
+    if launch_params is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid VK launch signature",
+        )
+
+    return launch_params
+
+
+@app.get("/me")
+async def read_current_user(
+    launch_params: VkLaunchParams = Depends(verified_vk_launch_params),
+) -> dict[str, int]:
+    return {"vk_user_id": launch_params.vk_user_id}
 ```
 
-This setup secures your FastAPI endpoints using VK Mini App authentication, similar to the Django and Django Ninja approaches.
+!!! tip
+    Replace the `/me` response with your own user lookup or account linking logic after the launch parameters are verified.

@@ -37,6 +37,30 @@ class VkLaunchParams:
     vk_ref: typing.Optional[str] = None
     vk_viewer_group_role: typing.Optional["ViewerGroupRoleEnum"] = None
 
+    _REQUIRED_FIELDS: typing.ClassVar[typing.Tuple[str, ...]] = (
+        "sign",
+        "vk_access_token_settings",
+        "vk_app_id",
+        "vk_are_notifications_enabled",
+        "vk_is_app_user",
+        "vk_is_favorite",
+        "vk_language",
+        "vk_platform",
+        "vk_ts",
+        "vk_user_id",
+    )
+    _OPTIONAL_INT_FIELDS: typing.ClassVar[typing.Tuple[str, ...]] = (
+        "vk_group_id",
+        "vk_profile_id",
+        "vk_testing_group_id",
+    )
+    _OPTIONAL_BOOL_FIELDS: typing.ClassVar[typing.Tuple[str, ...]] = (
+        "vk_has_profile_button",
+        "vk_is_play_machine",
+        "vk_is_recommended",
+        "vk_is_widescreen",
+    )
+
     def __init__(self, **kwargs: typing.Any):
         """Initialize the VkLaunchParams with keyword arguments."""
         self._data = kwargs
@@ -48,10 +72,15 @@ class VkLaunchParams:
 
     def __post_init__(self):
         """Post-initialization processing to convert types and validate data."""
+        missing_fields = [field for field in self._REQUIRED_FIELDS if getattr(self, field, None) is None]
+        if missing_fields:
+            raise InvalidInitDataError(f"Missing launch parameters: {', '.join(missing_fields)}")
+
         try:
             self.vk_app_id = int(self.vk_app_id)
             self.vk_user_id = int(self.vk_user_id)
-            self.vk_access_token_settings = self.vk_access_token_settings.split(",")  # type: ignore[attr-defined]
+            if isinstance(self.vk_access_token_settings, str):
+                self.vk_access_token_settings = self.vk_access_token_settings.split(",")
             self.vk_ts = datetime.fromtimestamp(float(self.vk_ts), timezone.utc)  # type: ignore[arg-type]
             self.vk_are_notifications_enabled = bool(int(self.vk_are_notifications_enabled))
             self.vk_is_app_user = bool(int(self.vk_is_app_user))
@@ -59,21 +88,19 @@ class VkLaunchParams:
             self.vk_language = LanguageEnum(self.vk_language)
             self.vk_platform = PlatformEnum(self.vk_platform)
 
-            if self.vk_has_profile_button is not None:
-                self.vk_has_profile_button = bool(int(self.vk_has_profile_button))
+            for field in self._OPTIONAL_INT_FIELDS:
+                value = getattr(self, field, None)
+                if value is not None:
+                    setattr(self, field, int(value))
 
-            if self.vk_is_play_machine is not None:
-                self.vk_is_play_machine = bool(int(self.vk_is_play_machine))
-
-            if self.vk_is_recommended is not None:
-                self.vk_is_recommended = bool(int(self.vk_is_recommended))
-
-            if self.vk_is_widescreen is not None:
-                self.vk_is_widescreen = bool(int(self.vk_is_widescreen))
+            for field in self._OPTIONAL_BOOL_FIELDS:
+                value = getattr(self, field, None)
+                if value is not None:
+                    setattr(self, field, bool(int(value)))
 
             if self.vk_viewer_group_role is not None:
                 self.vk_viewer_group_role = ViewerGroupRoleEnum(self.vk_viewer_group_role)
-        except ValueError as err:
+        except (TypeError, ValueError, OverflowError, OSError) as err:
             raise InvalidInitDataError("Invalid launch parameters") from err
 
     def get_data(self) -> typing.Dict[str, typing.Any]:
