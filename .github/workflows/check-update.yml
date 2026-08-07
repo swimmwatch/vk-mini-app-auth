@@ -12,7 +12,7 @@ jobs:
   check-vk-docs-updates:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Check VK Mini App documentation updates
         uses: ./.github/actions/webchanges-action
         with:
